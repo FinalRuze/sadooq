@@ -6134,7 +6134,7 @@ PremiumPS:CreateTextbox("Target Reset Player", false, function(prefix)
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
-    if game.Players.LocalPlayer.Character ~= nil then
+    if game.Players.LocalPlayer.Character then
         local targetPlayer = nil
 
         for _, player in pairs(game.Players:GetPlayers()) do
@@ -6144,27 +6144,24 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
             end
         end
 
-        if targetPlayer and targetPlayer.Character ~= nil and targetPlayer.Character:FindFirstChild("Head") then
-            local args = {
-                [1] = 80373024,
-                [2] = Enum.NormalId.Back,
-                [3] = 15,
-                [4] = workspace[targetPlayer.Name].Head,
-                [5] = CFrame.new(0, math.huge, 0)
-            }
+        if targetPlayer then
+            local sprayPaint = game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint")
+            if not sprayPaint then
+                sprayPaint = game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint")
+            end
 
-            if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-            elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-            elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+            if sprayPaint then
+                local args = {
+                    [1] = 80373024,
+                    [2] = Enum.NormalId.Back,
+                    [3] = 15,
+                    [4] = targetPlayer.Character.Head,
+                    [5] = CFrame.new(0, math.huge, 0)
+                }
+
+                sprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                sprayPaint.Parent = game.Players.LocalPlayer.Backpack
             end
         end
     end
