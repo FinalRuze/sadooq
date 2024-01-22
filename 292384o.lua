@@ -6153,12 +6153,18 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
                 [5] = CFrame.new(0, math.huge, 0)
             }
 
-            local sprayPaint = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") or game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint")
-
-            if sprayPaint then
-                sprayPaint.Parent = game.Players.LocalPlayer.Character
-                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                sprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
         end
     end
