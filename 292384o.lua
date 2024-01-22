@@ -6134,7 +6134,7 @@ PremiumPS:CreateTextbox("Target Reset Player", false, function(prefix)
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
-    if game.Players.LocalPlayer.Character then
+    if game.Players.LocalPlayer.Character ~= nil then
         local targetPlayer = nil
 
         for _, player in pairs(game.Players:GetPlayers()) do
@@ -6144,27 +6144,27 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
             end
         end
 
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
+        if targetPlayer and targetPlayer.Character ~= nil and targetPlayer.Character:FindFirstChild("Head") then
             local args = {
-                ToyId = 80373024,
-                ToyType = Enum.NormalId.Back,
-                ToySize = 15,
-                Target = targetPlayer.Character.Head,
-                TargetCFrame = CFrame.new(0, math.huge, 0)
+                [1] = 80373024,
+                [2] = Enum.NormalId.Back,
+                [3] = 15,
+                [4] = workspace[targetPlayer.Name].Head,
+                [5] = CFrame.new(0, math.huge, 0)
             }
 
-            local replicateToy = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy")
-
-            if game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-            end
-
-            replicateToy:InvokeServer("SprayPaint")
-
-            game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(args)
-
-            if game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
         end
     end
