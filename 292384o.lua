@@ -6127,21 +6127,18 @@ end)
 end)
 
 local isScriptRunning = false
-local playerPrefix = ""
+local playerTextBox = nil
 
-PremiumPS:CreateTextbox("Target Reset Player", false, function(prefix)
-    playerPrefix = prefix
+PremiumPS:CreateTextbox("Target Reset Player", true, function(prefix)
+    playerTextBox = prefix
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if game.Players.LocalPlayer.Character ~= nil then
         local targetPlayer = nil
 
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Name:sub(1, #playerPrefix):lower() == playerPrefix:lower() then
-                targetPlayer = player
-                break
-            end
+        if playerTextBox then
+            targetPlayer = game.Players:FindFirstChild(playerTextBox)
         end
 
         if targetPlayer and targetPlayer.Character ~= nil and targetPlayer.Character:FindFirstChild("Head") then
