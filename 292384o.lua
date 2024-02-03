@@ -6286,54 +6286,82 @@ PremiumPS:CreateToggle("Loop Reset All (Spray Paint)", {Toggled=false , Descript
 end)
 
 local isScriptFunky = false
-local playerName = ""
+local selectedGlitchPlayer = ""
+local glitchPlayerDropdown = nil
+local applyFlingStrength = 1
+
+-- Function to update the glitch player list in the dropdown
+local function updateGlitchPlayerList()
+    local glitchPlayerList = {}
+    for _, player in pairs(game.Players:GetPlayers()) do
+        table.insert(glitchPlayerList, player.Name)
+    end
+
+    if glitchPlayerDropdown then
+        glitchPlayerDropdown:Clear()
+        glitchPlayerDropdown:Add(glitchPlayerList)
+    end
+end
+
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+glitchPlayerDropdown = PremiumPS:CreateDropdown("Select Target Glitch Player", {List = {}, Default = ""}, function(player)
+    selectedGlitchPlayer = player
+end)
+
+-- Initial population of glitch player list
+updateGlitchPlayerList()
+
+-- Listen for player added and player removing events
+game.Players.PlayerAdded:Connect(updateGlitchPlayerList)
+game.Players.PlayerRemoving:Connect(updateGlitchPlayerList)
 
 PremiumPS:CreateTextbox("Target Glitch Player", false, function(plr)
-    playerName = plr
+    selectedGlitchPlayer = plr
 end)
 
 applyfling = 1
 PremiumPS:CreateSlider("Glitch Strength", {Min = 1, Max = 15, DefaultValue = 1}, function(flingstr)
-    applyfling = flingstr
+    applyFlingStrength = flingstr
 end)
 
 PremiumPS:CreateButton("Glitch Player (Spray Paint)", function()
-if game.Players.LocalPlayer.Character ~= nil then
-        local targetPlayer = nil
+    if selectedGlitchPlayer ~= "" then
+        if game.Players.LocalPlayer.Character ~= nil then
+            local targetPlayer = nil
 
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Name:sub(1, #playerName):lower() == playerName:lower() then
-                targetPlayer = player
-                break
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player.Name:sub(1, #selectedGlitchPlayer):lower() == selectedGlitchPlayer:lower() then
+                    targetPlayer = player
+                    break
+                end
+            end
+
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("LeftHand") then
+                local args = {
+                    [1] = 80373024,
+                    [2] = Enum.NormalId.Back,
+                    [3] = applyFlingStrength,
+                    [4] = workspace[targetPlayer.Name].LeftHand,
+                    [5] = CFrame.new(0, 0, 0)
+                }
+
+                -- Your existing code to glitch the player goes here
+                if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
+                    game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                    game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                    game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+                elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                    game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                    game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                    game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+                elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                    game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                end
             end
         end
-
-if targetPlayer and targetPlayer.Character then
-    if targetPlayer ~= game.Players.LocalPlayer and targetPlayer.Character:FindFirstChild("LeftHand") then
-        local args = {
-            [1] = 80373024,
-            [2] = Enum.NormalId.Back,
-            [3] = applyfling,
-            [4] = workspace[targetPlayer.Name].LeftHand,
-            [5] = CFrame.new(0, 0, 0)
-        }
-
-        if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-        game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-        game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-        game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-    elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-        game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-        game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-        game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-    elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
-        game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
     end
-end
-end
-end
 end)
 
 PremiumPS:CreateToggle("Loop Glitch Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
