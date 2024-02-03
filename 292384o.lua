@@ -6135,7 +6135,7 @@ for _, player in pairs(game.Players:GetPlayers()) do
 end
 
 -- Create the dropdown with the player list
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
+PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
     selectedPlayer = player
 end)
 
