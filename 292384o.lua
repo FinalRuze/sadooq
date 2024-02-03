@@ -6539,8 +6539,8 @@ game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players"
 end
 end)
 
-local isScriptShitting = false
-local targetPlayerNoclip = ""
+local targetPlayerShit = ""
+local noclipPlayerDropdown = nil
 
 -- Function to update the noclip player list in the dropdown
 local function updateNoclipPlayerList()
@@ -6556,8 +6556,8 @@ local function updateNoclipPlayerList()
 end
 
 -- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local noclipPlayerDropdown = PremiumPS:CreateDropdown("Select Target Noclip Player", {List = {}, Default = ""}, function(player)
-    targetPlayerNoclip = player
+noclipPlayerDropdown = PremiumPS:CreateDropdown("Select Target Noclip Player", {List = {}, Default = ""}, function(player)
+    targetPlayerShit = player
 end)
 
 -- Initial population of noclip player list
@@ -6568,12 +6568,12 @@ game.Players.PlayerAdded:Connect(updateNoclipPlayerList)
 game.Players.PlayerRemoving:Connect(updateNoclipPlayerList)
 
 PremiumPS:CreateButton("Apply Noclip to Player", function()
-    if targetPlayerNoclip ~= "" then
+    if targetPlayerShit ~= "" then
         if game.Players.LocalPlayer.Character ~= nil then
             local targetPlayer = nil
 
             for _, player in pairs(game.Players:GetPlayers()) do
-                if player.Name:sub(1, #targetPlayerNoclip):lower() == targetPlayerNoclip:lower() then
+                if player.Name:sub(1, #targetPlayerShit):lower() == targetPlayerShit:lower() then
                     targetPlayer = player
                     break
                 end
