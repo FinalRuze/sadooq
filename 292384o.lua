@@ -6128,35 +6128,33 @@ end)
 
 local isScriptRunning = false
 local selectedPlayer = nil
-local playerList = {}
-
--- Create the initial dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
-    selectedPlayer = player
-end)
+local playerDropdown = nil
 
 -- Function to update the player list in the dropdown
 local function updatePlayerList()
-    playerList = {}
+    local playerList = {}
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
 
-    -- Clear and re-add the updated list to the dropdown
-    playerDropdown:Clear()
-    playerDropdown:Add(playerList)
+    if playerDropdown then
+        playerDropdown:Clear()
+        playerDropdown:Add(playerList)
+    end
 end
 
--- Connect to player change events
-game.Players.PlayerAdded:Connect(function(player)
-    updatePlayerList()
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
+    selectedPlayer = player
 end)
 
-game.Players.PlayerRemoving:Connect(function(player)
-    updatePlayerList()
-end)
+-- Initial population of player list
+updatePlayerList()
 
--- Create the button to reset the player with spray paint
+-- Listen for player added and player removing events
+game.Players.PlayerAdded:Connect(updatePlayerList)
+game.Players.PlayerRemoving:Connect(updatePlayerList)
+
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
         local args = {
