@@ -6542,6 +6542,7 @@ end)
 local isScriptShitting = false
 local targetPlayerShit = ""
 local noclipPlayerDropdown = nil
+local noclipLoopDelay = 15.5
 
 -- Function to update the noclip player list in the dropdown
 local function updateNoclipPlayerList()
@@ -6567,10 +6568,6 @@ updateNoclipPlayerList()
 -- Listen for player added and player removing events
 game.Players.PlayerAdded:Connect(updateNoclipPlayerList)
 game.Players.PlayerRemoving:Connect(updateNoclipPlayerList)
-
-PremiumPS:CreateTextbox("Make Player Noclip", false, function(monkey)
-    targetPlayerShit = monkey
-end)
 
 PremiumPS:CreateButton("Apply Noclip to Player", function()
     if game.Players.LocalPlayer.Character ~= nil then
@@ -6607,6 +6604,50 @@ PremiumPS:CreateButton("Apply Noclip to Player", function()
                 game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
         end
+    end
+end)
+
+PremiumPS:CreateToggle("Loop Apply Noclip to Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
+    isScriptShitting = val
+
+    while isScriptShitting do
+        if targetPlayerShit then
+            local targetPlayer = nil
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player.Name:sub(1, #targetPlayerShit):lower() == targetPlayerShit:lower() then
+                    targetPlayer = player
+                    break
+                end
+            end
+
+            if targetPlayer then
+                if targetPlayer.Character and game.Players.LocalPlayer.Character then
+                    local args = {
+                        [1] = 0,
+                        [2] = Enum.NormalId.Bottom,
+                        [3] = 6.331,
+                        [4] = targetPlayer.Character.HumanoidRootPart,
+                        [5] = targetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
+                    }
+
+                    -- Your existing code to make the player noclip goes here
+                    if game.Players.LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                        game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                        game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                        game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                        game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+                    elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                        game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                        game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+                    elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                    end
+                end
+            end
+        end
+        wait(noclipLoopDelay)
     end
 end)
 
