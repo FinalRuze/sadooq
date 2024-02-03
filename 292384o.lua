@@ -6126,32 +6126,37 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
-local function refreshPlayerList()
-    local playerList = {}
-    for _, player in pairs(game.Players:GetPlayers()) do
-        table.insert(playerList, player.Name)
-    end
-    playerDropdown:Add(playerList)
-end
+local isScriptRunning = false
+local selectedPlayer = nil
+local playerList = {}
 
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
+-- Create the initial dropdown menu
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
     selectedPlayer = player
 end)
 
--- Initial population of the player list
-refreshPlayerList()
+-- Function to update the player list in the dropdown
+local function updatePlayerList()
+    playerList = {}
+    for _, player in pairs(game.Players:GetPlayers()) do
+        table.insert(playerList, player.Name)
+    end
 
--- Event to handle player join
+    -- Clear and re-add the updated list to the dropdown
+    playerDropdown:Clear()
+    playerDropdown:Add(playerList)
+end
+
+-- Connect to player change events
 game.Players.PlayerAdded:Connect(function(player)
-    refreshPlayerList()
+    updatePlayerList()
 end)
 
--- Event to handle player leave
 game.Players.PlayerRemoving:Connect(function(player)
-    refreshPlayerList()
+    updatePlayerList()
 end)
 
+-- Create the button to reset the player with spray paint
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
         local args = {
