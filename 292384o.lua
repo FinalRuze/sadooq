@@ -6126,26 +6126,25 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
-local isScriptRunning = false
-local selectedPlayer = nil
-
 local playerList = {}
 for _, player in pairs(game.Players:GetPlayers()) do
     table.insert(playerList, player.Name)
 end
 
--- Create the dropdown with the player list
-PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
+local selectedPlayer = nil
+
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
     selectedPlayer = player
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
-    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("Head") then
+    if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
         local args = {
             [1] = 80373024,
             [2] = Enum.NormalId.Back,
             [3] = 15,
-            [4] = workspace[selectedPlayer.Name].Head,
+            [4] = workspace[selectedPlayer].Head,
             [5] = CFrame.new(0, math.huge, 0)
         }
 
