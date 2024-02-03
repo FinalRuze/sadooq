@@ -6126,36 +6126,39 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
-local function updatePlayerList()
+local selectedPlayer = nil
+local playerDropdown = nil
+
+-- Function to update the dropdown menu with the current player list
+local function updateDropdown()
     local playerList = {}
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
 
-    -- Update the dropdown with the new player list
-    playerDropdown:Clear()
-    playerDropdown:Add(playerList)
+    if playerDropdown then
+        playerDropdown:Add(playerList)
+    else
+        -- Create the dropdown if it doesn't exist
+        playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
+            selectedPlayer = player
+        end)
+    end
 end
 
--- Create the initial player list
-updatePlayerList()
+-- Update the dropdown initially
+updateDropdown()
 
--- Connect events to update the player list dynamically
+-- Listen for players joining or leaving the game
 game.Players.PlayerAdded:Connect(function(player)
-    updatePlayerList()
+    updateDropdown()
 end)
 
 game.Players.PlayerRemoving:Connect(function(player)
-    updatePlayerList()
+    updateDropdown()
 end)
 
-local selectedPlayer = nil
-
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
-    selectedPlayer = player
-end)
-
+-- Button functionality remains the same
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
         local args = {
