@@ -6130,7 +6130,7 @@ local isScriptRunning = false
 local selectedPlayer = nil
 
 -- Assuming Elements:CreateDropdown is a function that creates a dropdown
-local dropdown = PremiumPS:CreateDropdown("Select Target Player", {List = game.Players:GetPlayers()}, function(player)
+PremiumPS:CreateDropdown("Select Target Player", {List = game.Players:GetPlayers()}, function(player)
     selectedPlayer = player
 end)
 
