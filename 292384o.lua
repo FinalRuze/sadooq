@@ -6131,23 +6131,20 @@ local function updatePlayerList()
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
-
+    -- Update the dropdown with the new player list
     playerDropdown:Add(playerList)
 end
 
--- Create the initial player list
+-- Populate the initial player list
 updatePlayerList()
 
--- Connect the events to update the player list when a player joins or leaves
-game.Players.PlayerAdded:Connect(updatePlayerList)
-game.Players.PlayerRemoving:Connect(updatePlayerList)
+-- Listen for player added and removed events to update the player list dynamically
+game.Players.PlayerAdded:Connect(function(player)
+    updatePlayerList()
+end)
 
--- The rest of your code remains unchanged
-local selectedPlayer = nil
-
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
-    selectedPlayer = player
+game.Players.PlayerRemoving:Connect(function(player)
+    updatePlayerList()
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
