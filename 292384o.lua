@@ -6129,27 +6129,23 @@ end)
 local isScriptRunning = false
 local selectedPlayer = nil
 
-local PremiumPS = {} -- Assuming PremiumPS is a module, replace this with your actual module
-
--- Function to create a dropdown menu with player names
-PremiumPS:CreateDropdown("Select Target Player", function(selectedPlayerName)
-    selectedPlayer = selectedPlayerName
+-- Assuming Elements:CreateDropdown is a function that creates a dropdown
+local dropdown = Elements:CreateDropdown("Select Target Player", {List = game.Players:GetPlayers()}, function(player)
+    selectedPlayer = player
 end)
 
+-- Assuming PremiumPS:CreateButton is a function that creates a button
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
-    if selectedPlayer then
-        local targetPlayer = game.Players:FindFirstChild(selectedPlayer)
+    if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("Head") then
+        local args = {
+            [1] = 80373024,
+            [2] = Enum.NormalId.Back,
+            [3] = 15,
+            [4] = workspace[selectedPlayer.Name].Head,
+            [5] = CFrame.new(0, math.huge, 0)
+        }
 
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
-            local args = {
-                [1] = 80373024,
-                [2] = Enum.NormalId.Back,
-                [3] = 15,
-                [4] = workspace[targetPlayer.Name].Head,
-                [5] = CFrame.new(0, math.huge, 0)
-            }
-
-             if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+         if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
                 game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
