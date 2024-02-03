@@ -6540,10 +6540,54 @@ end
 end)
 
 local isScriptShitting = false
-local targetPlayerShit = nil
+local targetPlayerShit = ""
+local noclipLoopDelay = 1 -- Adjust the delay as needed
 
-PremiumPS:CreateTextbox("Make Player Noclip", false, function(monkey)
-    targetPlayerShit = monkey
+-- Assuming PremiumPS:CreateToggle is a function that creates a toggle
+local noclipToggle = PremiumPS:CreateToggle("Loop Make Player Noclip", { Toggled = false, Description = false }, function(val)
+    isScriptShitting = val -- Update the toggle state
+
+    while isScriptShitting do
+        wait(noclipLoopDelay)
+
+        if targetPlayerShit ~= "" then
+            if game.Players.LocalPlayer.Character ~= nil then
+                local targetPlayer = nil
+
+                for _, player in pairs(game.Players:GetPlayers()) do
+                    if player.Name:sub(1, #targetPlayerShit):lower() == targetPlayerShit:lower() then
+                        targetPlayer = player
+                        break
+                    end
+                end
+
+                if targetPlayer and targetPlayer.Character ~= nil then
+                    local args = {
+                        [1] = 0,
+                        [2] = Enum.NormalId.Bottom,
+                        [3] = 6.331,
+                        [4] = workspace[targetPlayer.Name].HumanoidRootPart,
+                        [5] = workspace[targetPlayer.Name].HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
+                    }
+
+                    -- Your existing code to make the player noclip goes here
+                    if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                        game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                        game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                        game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                        game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+                    elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                        game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                        game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+                    elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                        game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                    end
+                end
+            end
+        end
+    end
 end)
 
 PremiumPS:CreateButton("Apply Noclip to Player", function()
@@ -6566,6 +6610,7 @@ PremiumPS:CreateButton("Apply Noclip to Player", function()
                 [5] = workspace[targetPlayer.Name].HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
             }
 
+            -- Your existing code to make the player noclip goes here
             if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
                 game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
                 game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
@@ -6583,7 +6628,7 @@ PremiumPS:CreateButton("Apply Noclip to Player", function()
     end
 end)
 
-PremiumPS:CreateToggle("Loop Apply Noclip to Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
+local noclipLoopToggle = PremiumPS:CreateToggle("Loop Apply Noclip to Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
     isScriptShitting = val
 
     while isScriptShitting do
@@ -6606,6 +6651,7 @@ PremiumPS:CreateToggle("Loop Apply Noclip to Player (Spray Paint)", { Toggled = 
                         [5] = targetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
                     }
 
+                    -- Your existing code to apply noclip goes here
                     if game.Players.LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
                         game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
                         game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
@@ -6622,7 +6668,7 @@ PremiumPS:CreateToggle("Loop Apply Noclip to Player (Spray Paint)", { Toggled = 
                 end
             end
         end
-        wait(15.9) -- Adjust the delay as needed
+        wait(15.5) -- Adjust the delay as needed
     end
 end)
 
