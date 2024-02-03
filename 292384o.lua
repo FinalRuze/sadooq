@@ -6157,7 +6157,6 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
                 game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
             elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
                 game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-            end
         end
     end
 end)
