@@ -6127,20 +6127,15 @@ end)
 end)
 
 local isScriptRunning = false
-local playerPrefix = ""
 
--- Assuming CreateTextbox returns a TextBox value
-local textBox = PremiumPS:CreateTextbox("Target Reset Player", false, function(prefix)
-    playerPrefix = prefix
-end)
-
--- Assuming CreateButton returns a Button value
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if game.Players.LocalPlayer.Character then
+        local playerName = script.Parent.PlayerNameTextBox.Text -- Get the player name from the TextBox
+
         local targetPlayer = nil
 
         for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Name:sub(1, #playerPrefix):lower() == playerPrefix:lower() then
+            if player.Name:lower() == playerName:lower() then
                 targetPlayer = player
                 break
             end
@@ -6151,21 +6146,23 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
                 [1] = 80373024,
                 [2] = Enum.NormalId.Back,
                 [3] = 15,
-                [4] = targetPlayer.Character.Head,
+                [4] = workspace[targetPlayer.Name].Head,
                 [5] = CFrame.new(0, math.huge, 0)
             }
 
-            local sprayPaint = game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint")
-
-            if sprayPaint then
-                sprayPaint.Parent = game.Players.LocalPlayer.Character
+            if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
                 game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                sprayPaint.Parent = game.Players.LocalPlayer.Backpack
-            else
-                warn("SprayPaint tool not found in Backpack!")
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
-        else
-            warn("Target player or Head not found!")
         end
     end
 end)
