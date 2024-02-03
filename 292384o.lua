@@ -6179,7 +6179,7 @@ local function resetPlayer()
             game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
 	end
     end
-end
+end)
 
 PremiumPS:CreateToggle("Loop Reset Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
     if val then
