@@ -6128,30 +6128,30 @@ end)
 
 local isScriptRunning = false
 local selectedPlayer = nil
-local playerList = {}
 
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
-    selectedPlayer = player
-end)
-
--- Function to update the player list
+-- Function to update the player list in the dropdown
 local function updatePlayerList()
-    playerList = {}
+    local playerList = {}
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
     playerDropdown:Add(playerList)
 end
 
--- Initial update of the player list
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
+    selectedPlayer = player
+end)
+
+-- Update the player list initially
 updatePlayerList()
 
--- Track player joins and leaves to dynamically update the dropdown
+-- Event to handle when a player joins
 game.Players.PlayerAdded:Connect(function(player)
     updatePlayerList()
 end)
 
+-- Event to handle when a player leaves
 game.Players.PlayerRemoving:Connect(function(player)
     updatePlayerList()
 end)
