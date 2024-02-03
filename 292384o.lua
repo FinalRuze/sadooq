@@ -6127,24 +6127,24 @@ end)
 end)
 
 local isScriptRunning = false
-local playerPrefix = ""
+local targetPlayerName = ""
 
-PremiumPS:CreateTextbox("Target Reset Player", false, function(prefix)
-    playerPrefix = prefix
+local textBox = PremiumPS:CreateTextbox("Target Reset Player", true, function(name)
+    targetPlayerName = name
 end)
 
-PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
-    if game.Players.LocalPlayer.Character ~= nil then
+local function resetPlayer()
+    if game.Players.LocalPlayer.Character then
         local targetPlayer = nil
 
         for _, player in pairs(game.Players:GetPlayers()) do
-            if player.Name:sub(1, #playerPrefix):lower() == playerPrefix:lower() then
+            if player.Name:lower():find(targetPlayerName:lower()) == 1 then
                 targetPlayer = player
                 break
             end
         end
 
-        if targetPlayer and targetPlayer.Character ~= nil and targetPlayer.Character:FindFirstChild("Head") then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
             local args = {
                 [1] = 80373024,
                 [2] = Enum.NormalId.Back,
@@ -6154,21 +6154,23 @@ PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
             }
 
             if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Extras"):WaitForChild("ReplicateToy"):InvokeServer("SprayPaint")
-                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-            elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-                game:GetService("Players").LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-            elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild("SprayPaint") then
-                game:GetService("Players").LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
         end
     end
-end)
+end
+
+PremiumPS:CreateButton("Reset Player (Spray Paint)", resetPlayer)
 
 PremiumPS:CreateToggle("Loop Reset Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
     if val then
