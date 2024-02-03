@@ -6126,37 +6126,35 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
+local isScriptRunning = false
 local selectedPlayer = nil
-local playerDropdown = nil
+local playerList = {}
 
--- Function to update the player list and refresh the dropdown
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
+    selectedPlayer = player
+end)
+
+-- Function to update the player list
 local function updatePlayerList()
-    local playerList = {}
+    playerList = {}
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
-
-    -- Check if the dropdown has been created
-    if playerDropdown then
-        -- Update the dropdown with the new player list
-        playerDropdown:Clear()
-        playerDropdown:Add(playerList)
-    else
-        -- If dropdown doesn't exist, create it with the initial player list
-        playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
-            selectedPlayer = player
-        end)
-    end
+    playerDropdown:Add(playerList)
 end
 
--- Call the function initially to set up the dropdown
+-- Initial update of the player list
 updatePlayerList()
 
--- Connect a function to be called when a player joins or leaves
-game.Players.PlayerAdded:Connect(updatePlayerList)
-game.Players.PlayerRemoving:Connect(updatePlayerList)
+-- Track player joins and leaves to dynamically update the dropdown
+game.Players.PlayerAdded:Connect(function(player)
+    updatePlayerList()
+end)
 
--- Continue with the rest of your code...
+game.Players.PlayerRemoving:Connect(function(player)
+    updatePlayerList()
+end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
