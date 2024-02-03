@@ -6126,8 +6126,8 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
-local isScriptRunning = false
 local selectedPlayer = nil
+local playerDropdown = nil
 
 -- Function to update the player list in the dropdown
 local function updatePlayerList()
@@ -6135,26 +6135,27 @@ local function updatePlayerList()
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
-    playerDropdown:Add(playerList)
+
+    -- Check if the dropdown is already created
+    if playerDropdown then
+        playerDropdown:Clear()  -- Clear the existing items
+        playerDropdown:Add(playerList)  -- Add the updated player list
+    else
+        -- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+        playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
+            selectedPlayer = player
+        end)
+    end
 end
 
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
-    selectedPlayer = player
-end)
+-- Connect the function to update the player list when a player joins
+game.Players.PlayerAdded:Connect(updatePlayerList)
 
--- Update the player list initially
+-- Connect the function to update the player list when a player leaves
+game.Players.PlayerRemoving:Connect(updatePlayerList)
+
+-- Initial call to populate the dropdown with current players
 updatePlayerList()
-
--- Event to handle when a player joins
-game.Players.PlayerAdded:Connect(function(player)
-    updatePlayerList()
-end)
-
--- Event to handle when a player leaves
-game.Players.PlayerRemoving:Connect(function(player)
-    updatePlayerList()
-end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
     if selectedPlayer and game.Players[selectedPlayer] and game.Players[selectedPlayer].Character and game.Players[selectedPlayer].Character:FindFirstChild("Head") then
