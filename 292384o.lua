@@ -6539,6 +6539,7 @@ game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players"
 end
 end)
 
+local isScriptShitting = false
 local targetPlayerShit = ""
 local noclipPlayerDropdown = nil
 
@@ -6567,41 +6568,43 @@ updateNoclipPlayerList()
 game.Players.PlayerAdded:Connect(updateNoclipPlayerList)
 game.Players.PlayerRemoving:Connect(updateNoclipPlayerList)
 
+PremiumPS:CreateTextbox("Make Player Noclip", false, function(monkey)
+    targetPlayerShit = monkey
+end)
+
 PremiumPS:CreateButton("Apply Noclip to Player", function()
-    if targetPlayerShit ~= "" then
-        if game.Players.LocalPlayer.Character ~= nil then
-            local targetPlayer = nil
+    if game.Players.LocalPlayer.Character ~= nil then
+        local targetPlayer = nil
 
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player.Name:sub(1, #targetPlayerShit):lower() == targetPlayerShit:lower() then
-                    targetPlayer = player
-                    break
-                end
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Name:sub(1, #targetPlayerShit):lower() == targetPlayerShit:lower() then
+                targetPlayer = player
+                break
             end
+        end
 
-            if targetPlayer and targetPlayer.Character ~= nil then
-                local args = {
-                    [1] = 0,
-                    [2] = Enum.NormalId.Bottom,
-                    [3] = 6.331,
-                    [4] = workspace[targetPlayer.Name].HumanoidRootPart,
-                    [5] = workspace[targetPlayer.Name].HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
-                }
+        if targetPlayer and targetPlayer.Character ~= nil then
+            local args = {
+                [1] = 0,
+                [2] = Enum.NormalId.Bottom,
+                [3] = 6.331,
+                [4] = workspace[targetPlayer.Name].HumanoidRootPart,
+                [5] = workspace[targetPlayer.Name].HumanoidRootPart.CFrame * CFrame.new(0, 99999, 0)
+            }
 
-                -- Your existing code to apply noclip to the player goes here
-                if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
-                    game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
-                    game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
-                    game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                    game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                    game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
-                elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
-                    game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
-                    game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                    game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
-                elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
-                    game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
-                end
+            -- Your existing code to make the player noclip goes here
+            if game:GetService("Players").LocalPlayer.Backpack.Toys:FindFirstChild("SprayPaint") then
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game:GetService("ReplicatedStorage").Remotes.Extras.ReplicateToy:InvokeServer("SprayPaint")
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game:GetService("Players").LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Backpack:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Backpack.SprayPaint.Parent = game.Players.LocalPlayer.Character
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
+                game.Players.LocalPlayer.Character.SprayPaint.Parent = game.Players.LocalPlayer.Backpack
+            elseif game.Players.LocalPlayer.Character:FindFirstChild("SprayPaint") then
+                game.Players.LocalPlayer.Character.SprayPaint.Remote:FireServer(unpack(args))
             end
         end
     end
