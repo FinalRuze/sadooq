@@ -6126,25 +6126,30 @@ game:GetService("RunService").Heartbeat:Connect(function()
 end)
 end)
 
-local function updatePlayerList()
+local function refreshPlayerList()
     local playerList = {}
     for _, player in pairs(game.Players:GetPlayers()) do
         table.insert(playerList, player.Name)
     end
-    -- Update the dropdown with the new player list
     playerDropdown:Add(playerList)
 end
 
--- Populate the initial player list
-updatePlayerList()
+-- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
+local selectedPlayer = nil
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
+    selectedPlayer = player
+end)
 
--- Listen for player added and removed events to update the player list dynamically
+-- Initial population of the player list
+refreshPlayerList()
+
+-- Connect to the PlayerAdded and PlayerRemoving events to update the player list
 game.Players.PlayerAdded:Connect(function(player)
-    updatePlayerList()
+    refreshPlayerList()
 end)
 
 game.Players.PlayerRemoving:Connect(function(player)
-    updatePlayerList()
+    refreshPlayerList()
 end)
 
 PremiumPS:CreateButton("Reset Player (Spray Paint)", function()
