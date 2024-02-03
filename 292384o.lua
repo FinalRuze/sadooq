@@ -6360,10 +6360,6 @@ PremiumPS:CreateButton("Glitch Player (Spray Paint)", function()
     end
 end)
 
-PremiumPS:CreateSlider("Glitch Strength", {Min = 1, Max = 15, DefaultValue = 1}, function(flingstr)
-    applyFlingStrength = flingstr
-end)
-
 local glitchLoopToggle = PremiumPS:CreateToggle("Loop Glitch Player (Spray Paint)", { Toggled = false, Description = false }, function(val)
     isScriptFunky = val -- Update the toggle state
 
