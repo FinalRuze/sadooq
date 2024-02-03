@@ -6129,8 +6129,13 @@ end)
 local isScriptRunning = false
 local selectedPlayer = nil
 
--- Assuming PremiumPS:CreateDropdown is a function that creates a dropdown menu
-local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = {}, Default = ""}, function(player)
+local playerList = {}
+for _, player in pairs(game.Players:GetPlayers()) do
+    table.insert(playerList, player.Name)
+end
+
+-- Create the dropdown with the player list
+local playerDropdown = PremiumPS:CreateDropdown("Select Target Player", {List = playerList, Default = ""}, function(player)
     selectedPlayer = player
 end)
 
